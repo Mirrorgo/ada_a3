@@ -2,6 +2,7 @@
 
 
 ## Commit Message Format
+- chore：这是一个常见的前缀，用于表示其他类别未涵盖的常规任务
 - build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
 - ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
 - docs: Documentation only changes
