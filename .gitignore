@@ -9,3 +9,5 @@
 
 # GNAT project files
 **/*.exe
+
+.local/
