@@ -1,0 +1,119 @@
+V "GNAT Lib v2021"
+P ZX
+
+RN
+RV NO_DIRECT_BOOLEAN_OPERATORS
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_ASPECT_SPECIFICATIONS
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U lz77%b		lz77.adb		586c65fc NE OO PK IU
+W ada%s			ada.ads			ada.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+
+U lz77%s		lz77.ads		35a2f836 EE NE OO PK IU
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W interfaces%s		interfac.ads		interfac.ali
+
+D ada.ads		20210520051132 76789da1 ada%s
+D a-except.ads		20210520051128 946f3014 ada.exceptions%s
+D a-inteio.ads		20210520051128 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20210520051128 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20210520051130 119b8fb3 ada.streams%s
+D a-string.ads		20210520051130 90ac6797 ada.strings%s
+D a-sttebu.ads		20210520051130 18209c64 ada.strings.text_buffers%s
+D a-stuten.ads		20210520051130 808c40ad ada.strings.utf_encoding%s
+D a-tags.ads		20210520051130 9eaa38c6 ada.tags%s
+D a-textio.ads		20210520051130 aef4d56d ada.text_io%s
+D a-tiinio.ads		20210520051130 390edddb ada.text_io.integer_io%s
+D a-unccon.ads		20210520051130 0e9b276f ada.unchecked_conversion%s
+D big_integers.ads	20240424122614 a256e9ad big_integers%s
+D interfac.ads		20210520051132 edec285f interfaces%s
+D i-cstrea.ads		20210520051132 e53d8b8e interfaces.c_streams%s
+D lz77.ads		20240428200858 7a1839c4 lz77%s
+D lz77.adb		20240428145336 7acb00f1 lz77%b
+D system.ads		20210520051136 2ffa5114 system%s
+D s-crtl.ads		20210520051132 0ebbdb71 system.crtl%s
+D s-exctab.ads		20210520051132 54135002 system.exception_table%s
+D s-ficobl.ads		20210520051132 078245e4 system.file_control_block%s
+D s-parame.ads		20210520051134 4752c4cb system.parameters%s
+D s-putima.ads		20210520051134 4e095881 system.put_images%s
+D s-secsta.ads		20210520051134 9b3ab94b system.secondary_stack%s
+D s-soflin.ads		20210520051134 a7318a92 system.soft_links%s
+D s-stache.ads		20210520051134 a37c21ec system.stack_checking%s
+D s-stalib.ads		20210520051134 472fbca8 system.standard_library%s
+D s-stoele.ads		20210520051134 2dc34a04 system.storage_elements%s
+D s-stoele.adb		20210520051134 ed88f8fb system.storage_elements%b
+D s-traent.ads		20210520051134 26a8d361 system.traceback_entries%s
+D s-unstyp.ads		20210520051134 2b077493 system.unsigned_types%s
+D s-wchcon.ads		20210520051136 1b7d22d2 system.wch_con%s
+D unchconv.ads		20210520051136 ca2f9e18 unchecked_conversion%s
+G a e
+G c Z s b [length_acc lz77 41 13 none]
+G c Z s s [decoded_length lz77 54 13 none]
+G c Z s s [tokenIP lz77 14 9 none]
+G c Z s s [token_arrayIP lz77 21 9 none]
+G c Z s s [partial_lengthIP lz77 31 9 none]
+G c Z s s [valid lz77 65 13 none]
+G c Z s b [put lz77 87 14 none]
+G c Z s b [decode lz77 95 14 none]
+G c Z s b [is_valid lz77 101 13 none]
+G c Z s b [decode_fast lz77 114 14 none]
+G c Z s s [byte_arrayIP lz77 11 9 none]
+G r c none [length_acc lz77 41 13 none] [to_big_integer big_integers 16 13 none]
+G r c none [length_acc lz77 41 13 none] [Oadd big_integers 36 13 none]
+G r c none [decoded_length lz77 54 13 none] [to_big_integer big_integers 16 13 none]
+G r c none [decoded_length lz77 54 13 none] [Oadd big_integers 36 13 none]
+G r c none [valid lz77 65 13 none] [to_big_integer big_integers 16 13 none]
+G r c none [valid lz77 65 13 none] [Oadd big_integers 36 13 none]
+G r c none [valid lz77 65 13 none] [in_range big_integers 23 13 none]
+G r c none [valid lz77 65 13 none] [Ole big_integers 12 13 none]
+X 1 ada.ads
+16K9*Ada 20e8 17|1r6 1r23 2r6 2r31
+X 3 a-inteio.ads
+18K13*Integer_Text_IO[11|46] 17|2w10 2r35
+X 10 a-textio.ads
+58K13*Text_IO 725e16 17|1w10 1r27
+262U14*New_Line 17|34s39 35s39 36s39
+390U14*Put 17|36s24
+463U14*Put 17|34s7 35s7 36s7
+X 11 a-tiinio.ads
+80U14*Put 17|34s24[3|18] 35s24[3|18]
+X 14 interfac.ads
+38K9*Interfaces 231e15 16|1w6
+X 16 lz77.ads
+4K9*LZ77 118l5 118e9 17|9b14 62l5 62t9
+11A9*Byte_Array(character)<integer> 95r61 114r66 17|39r61 54r66
+14R9*Token 18e14 21r52 87r25 17|32r24
+15i7*Offset{natural} 76r36 78r23 17|34r30
+16i7*Length{natural} 49r37 78r48 17|21r39 27r42 35r30
+17e7*Next_C{character} 17|36r30
+21A9*Token_Array(14R9)<integer> 41r35 54r39 57r39 65r30 68r30 95r32 101r33
+. 114r37 17|11r35 39r32 48r33 54r37
+46i15 I{integer} 47r27 48r15 48r64 49r34 50r38 51r34
+50i20 J{integer} 51r57
+72i18 I{integer} 73r49 76r33 77r14 77r63 78r20 78r45
+87U14*Put 87>18 17|32b14 37l8 37t11
+87r18 T{14R9} 17|32b18 34r28 35r28 36r28
+95U14*Decode 95>21 95=45 96<21 96<50 17|39b14 46l8 46t14
+95a21 Input{21A9} 17|39b21
+95a45 Output{11A9} 17|39b45
+96i21 Output_Length{natural} 97r34 17|40b21 44m7
+96b50 Error{boolean} 97r23 17|40b50 45m7
+101V13*Is_Valid{boolean} 101>22 102r18 17|48b13 52l8 52t16
+101a22 Input{21A9} 102r45 102r51 102r78 102r84 17|48b22
+114U14*Decode_Fast 114>26 114=50 115<26 17|54b14 60l8 60t19
+114a26 Input{21A9} 116r19 116r25 116r89 117r56 17|54b26
+114a50 Output{11A9} 116r46 17|54b50
+115i26 Output_Length{natural} 117r14 17|55b26 59m7
+X 17 lz77.adb
+15i11 Index{integer} 18r42 22r44 25r17 26r16 26r58 27r35
+18i22 I{integer} 19r22 20r17 20r55 21r36
+22i24 I{integer} 23r48 24r23
+23i30 J{integer} 24r35
+
