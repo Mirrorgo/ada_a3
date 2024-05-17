@@ -6,3 +6,6 @@
 
 # GNAT project files
 **/*.o
+
+# GNAT project files
+**/*.exe
