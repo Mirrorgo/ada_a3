@@ -1,0 +1,8 @@
+# .gitignore for Ada projects
+
+# ALI files (Ada Library Information)
+**/*.ali
+
+
+# GNAT project files
+**/*.o
