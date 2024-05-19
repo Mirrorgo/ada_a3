@@ -11,3 +11,7 @@
 **/*.exe
 
 .local/
+
+obj/
+
+proof/sessions/
