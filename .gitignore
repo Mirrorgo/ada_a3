@@ -9,3 +9,9 @@
 
 # GNAT project files
 **/*.exe
+
+.local/
+
+obj/
+
+proof/sessions/
