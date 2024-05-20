@@ -1,4 +1,18 @@
 # ada assignment 3
+## tasks
+### task1
+测试用例
+- (0,0,'A'),(1,2,'B) ✅
+- (0,0,‘a’), (2,1,‘b’) ❌
+-  (0,2,‘A’), (0,1,‘B’) ✅
+## command
+```bash
+$ gnatmake --version
+$ gnatprove --version
+$ gnatmake main
+```
+## tasks
+> 只需要修改lz77.abd和main.adb,其他文件都不要动
 
 
 ## Commit Message Format
