@@ -51,47 +51,74 @@ is
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural; Error : out Boolean)
    is
-      Output_Index : Natural := Output'First;  -- Index for the Output array
+      Output_Index : Natural;
    begin
       -- IMPLEMENT THIS
+      if Output'First < 0 then
+         Error         := True;
+         Output_Length := 0;
+         return;
+      end if;
+      Output_Index  := Output'First;  -- Index for the Output array
       Output_Length := 0;
       Error         := False;
+      --      Output_Index + Input.Length - 1 <= Output'Last
       for Token_Index in Input'Range loop
          declare
-            Token_Offset : constant Natural   := Input (Token_Index).Offset;
-            Token_Length : constant Natural   := Input (Token_Index).Length;
-            Token_Next_C : constant Character := Input (Token_Index).Next_C;
+            Token_Offset : Natural;
+            Token_Length : Natural;
+            Token_Next_C : Character;
          begin
-            for I in 1 .. Token_Length loop
-               declare
-                  Source_Index : Natural :=
-                    Output_Index - Token_Offset + I - 1;
-               begin
-                  if Source_Index < Output'First then
-                     Error         := True;
-                     Output_Length := 0;
-                     return;
-                  end if;
-                  Output (Output_Index + I - 1) := Output (Source_Index);
-               end;
-            end loop;
+            Token_Offset := Input (Token_Index).Offset;
+            Token_Length := Input (Token_Index).Length;
+            Token_Next_C := Input (Token_Index).Next_C;
 
-            if Output_Index + Token_Length + 1 > Output'Last then
+            if Output_Index - 1 < Output'First then
+               -- 如果输出的起始索引小于 Output'First，则索引超出范围，报错
                Error         := True;
                Output_Length := 0;
                return;
             end if;
 
-            Output (Output_Index + Token_Length) := Token_Next_C;
-
+            if Output_Index < Token_Offset or
+              Token_Length + Output_Index - 1 > Output'Last --边界对吗？
+            then
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
             pragma Loop_Invariant
-              (if Token_Length >= 1 then
-                 (for all I in 1 .. Token_Length =>
-                    Output (Output_Index - Token_Offset + I) =
-                    Output (Output_Index + I)));
+              (((Output_Index >= Token_Offset) and
+                (Token_Length - 1 > Output'Last - Output_Index)) or
+               (Error = True and Output_Length = 0));
+            for I in 1 .. Token_Length loop
+               if (Output_Index - Token_Offset) < Output'First - (I - 1) then
+                  Error         := True;
+                  Output_Length := 0;
+                  return;
+               end if;
+               Output (Output_Index + I - 1) :=
+                 Output ((Output_Index - Token_Offset) + (I - 1));
+            end loop;
 
-            Output_Index := Output_Index + Token_Length + 1;
+            if Output_Index > Output'Last - Token_Length - 1 then
+               --  if Output_Index + Token_Length + 1 > Output'Last then
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
 
+            if Output_Index + Token_Length < Output'Last and
+              Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
+            then
+               Output (Output_Index + Token_Length) := Token_Next_C;
+               Output_Index := Output_Index + Token_Length + 1;
+            else
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
+            --  pragma Assert (Output_Index <= Output'Last);
          end;
       end loop;
 
