@@ -87,9 +87,16 @@ is
                Output_Length := 0;
                return;
             end if;
+            --  pragma Loop_Invariant
+            --    (((Output_Index >= Token_Offset) and
+            --      (Token_Length - 1 > Output'Last - Output_Index)) or
+            --     (Error = True and Output_Length = 0));
+
             pragma Loop_Invariant
-              (((Output_Index >= Token_Offset) and
-                (Token_Length - 1 > Output'Last - Output_Index)) or
+              ((if Token_Length >= 1 then
+                  (for all J in 1 .. Token_Length =>
+                     Output (Output_Index + J) =
+                     Output (Output_Index + J - Token_Offset))) or
                (Error = True and Output_Length = 0));
             for I in 1 .. Token_Length loop
                if (Output_Index - Token_Offset) < Output'First - (I - 1) then
@@ -108,26 +115,26 @@ is
                return;
             end if;
 
-            if Output_Index + Token_Length < Output'Last and
-              Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
-            then
-               Output (Output_Index + Token_Length) := Token_Next_C;
-               Output_Index := Output_Index + Token_Length + 1;
-            else
-               Error         := True;
-               Output_Length := 0;
-               return;
-            end if;
-            --  pragma Assert (Output_Index <= Output'Last);
+            Output (Output_Index + Token_Length) := Token_Next_C;
+            Output_Index := Output_Index + Token_Length + 1;
+
+            --  if Output_Index + Token_Length < Output'Last
+            --     --  and
+            --     --    Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
+            --     then
+            --     Output (Output_Index + Token_Length) := Token_Next_C;
+            --     Output_Index := Output_Index + Token_Length + 1;
+            --  else
+            --     Error         := True;
+            --     Output_Length := 0;
+            --     return;
+            --  end if;
          end;
       end loop;
 
       -- Set the final output length
       Output_Length := Output_Index - Output'First;
 
-      --  pragma Loop_Invariant (for all J in 1 .. Inp Token_Index-1 =>
-      --     for all I in Output'First .. Output_Index =>
-      --        Output (I) = Decode (Source (I))
    end Decode;
 
    function Is_Valid (Input : in Token_Array) return Boolean is
