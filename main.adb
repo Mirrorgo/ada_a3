@@ -26,9 +26,9 @@ is
    B     : Byte_Array (1 .. 100) := (others => 'X');
    BLen  : Natural;
 begin
-   Decode (T1, B, BLen, Error);
+   --  Decode (T1, B, BLen, Error);
    --  Decode (T2, B, BLen, Error);
-   --  Decode (T3, B, BLen, Error);
+   Decode (T3, B, BLen, Error);
    if not Error then
       Put ("No erorr reported. Got this many bytes: ");
       Put (BLen);
