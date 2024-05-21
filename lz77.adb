@@ -65,13 +65,10 @@ is
       --      Output_Index + Input.Length - 1 <= Output'Last
       for Token_Index in Input'Range loop
          declare
-            Token_Offset : Natural;
-            Token_Length : Natural;
-            Token_Next_C : Character;
+            Token_Offset : Natural   := Input (Token_Index).Offset;
+            Token_Length : Natural   := Input (Token_Index).Length;
+            Token_Next_C : Character := Input (Token_Index).Next_C;
          begin
-            Token_Offset := Input (Token_Index).Offset;
-            Token_Length := Input (Token_Index).Length;
-            Token_Next_C := Input (Token_Index).Next_C;
 
             --  if Output_Index - 1 < Output'First then
             --     -- 如果输出的起始索引小于 Output'First，则索引超出范围，报错
@@ -99,6 +96,8 @@ is
             --           Output (Output_Index + J - Token_Offset))) or
             --     (Error = True and Output_Length = 0));
             for I in 1 .. Token_Length loop
+               --  pragma Loop_Invariant
+               --    (Output_Index - I + Token_Length + 1 = Output_Index);
                if (Output_Index - Token_Offset) < Output'First - (I - 1) then
                   Error         := True;
                   Output_Length := 0;
