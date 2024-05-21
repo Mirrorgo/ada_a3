@@ -56,45 +56,18 @@ is
       -- IMPLEMENT THIS
       Output_Length := 0;
       Error         := False;
-
-      -- Process each token in the Input array
       for Token_Index in Input'Range loop
-         --  pragma Loop_Invariant
-         --    (Output_Index >= Output'First and
-         --     Output_Index <= Output'Last + 1 and
-         --     (if Error then Output_Length = 0)
-         --  --  and
-         --  --  (for all K in Input'First .. Token_Index =>
-         --  --     Output_Index <= Output'Last + 1)
-         --  );
          declare
             Token_Offset : constant Natural   := Input (Token_Index).Offset;
             Token_Length : constant Natural   := Input (Token_Index).Length;
             Token_Next_C : constant Character := Input (Token_Index).Next_C;
          begin
-            --  逻辑✅
-            --  作为不变量会不会更好?
-            --  Task1 不应该检查这个
-            -- Check if Output_Index + Token.Length exceeds Output'Last
-            --  if Output_Index + Token_Length > Output'Last then
-            --     Error         := True;
-            --     Output_Length := 0;
-            --     return;
-            --  end if;
-
-            -- Copy the bytes from the output buffer
-
             for I in 1 .. Token_Length loop
                declare
                   Source_Index : Natural :=
                     Output_Index - Token_Offset + I - 1;
-                  --  边界没问题
                begin
-                  -- Check if Source_Index is within the valid range
-                  if Source_Index < Output'First
-                     --  这个也不用检查
-                     --    or else Source_Index >= Output_Index
-                     then
+                  if Source_Index < Output'First then
                      Error         := True;
                      Output_Length := 0;
                      return;
@@ -103,7 +76,6 @@ is
                end;
             end loop;
 
-            -- Add the next character to the output buffer
             if Output_Index + Token_Length + 1 > Output'Last then
                Error         := True;
                Output_Length := 0;
@@ -112,14 +84,23 @@ is
 
             Output (Output_Index + Token_Length) := Token_Next_C;
 
-            -- Update Output_Index
+            pragma Loop_Invariant
+              (if Token_Length >= 1 then
+                 (for all I in 1 .. Token_Length =>
+                    Output (Output_Index - Token_Offset + I) =
+                    Output (Output_Index + I)));
+
             Output_Index := Output_Index + Token_Length + 1;
+
          end;
       end loop;
 
       -- Set the final output length
       Output_Length := Output_Index - Output'First;
 
+      --  pragma Loop_Invariant (for all J in 1 .. Inp Token_Index-1 =>
+      --     for all I in Output'First .. Output_Index =>
+      --        Output (I) = Decode (Source (I))
    end Decode;
 
    function Is_Valid (Input : in Token_Array) return Boolean is

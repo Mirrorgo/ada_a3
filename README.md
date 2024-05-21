@@ -11,6 +11,9 @@ $ gnatmake --version
 $ gnatprove --version
 $ gnatmake main
 ```
+
+## tip
+To_Big_Integer在prove的时候可以使用
 ## tasks
 > 只需要修改lz77.abd和main.adb,其他文件都不要动
 
@@ -26,3 +29,7 @@ $ gnatmake main
 - refactor: A code change that neither fixes a bug nor adds a feature
 - style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 - test: Adding missing tests or correcting existing tests
+
+## 坑
+Output'First <= Output'Last 无法prove
+Output'First <= Output'Length + Output'First 却可以prove
