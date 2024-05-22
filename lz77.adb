@@ -54,6 +54,7 @@ is
       Output_Index : Natural;
    begin
       -- IMPLEMENT THIS
+      --  Output_Length := 0;
       if Output'First < 0 then
          Error         := True;
          Output_Length := 0;
@@ -81,11 +82,12 @@ is
                Output_Length := 0;
                return;
             end if;
+
             --  pragma Loop_Invariant
             --    (((Output_Index >= Token_Offset) and
             --      (Token_Length - 1 > Output'Last - Output_Index)) or
             --     (Error = True and Output_Length = 0));
-
+            --  pragma Loop_Invariant (if Error then Output_Length = 0);
             --  pragma Loop_Invariant
             --    ((if Token_Length >= 1 then
             --        (for all J in 1 .. Token_Length =>
@@ -93,8 +95,7 @@ is
             --           Output (Output_Index + J - Token_Offset))) or
             --     (Error = True and Output_Length = 0));
             for I in 1 .. Token_Length loop
-               --  pragma Loop_Invariant
-               --    (Output_Index - I + Token_Length + 1 = Output_Index);
+               --  pragma Loop_Invariant (Output_Index = Output_Index);
                if (Output_Index - Token_Offset) < Output'First - (I - 1) then
                   Error         := True;
                   Output_Length := 0;
@@ -111,9 +112,7 @@ is
                return;
             end if;
 
-            --  Output (Output_Index + Token_Length) := Token_Next_C;
-            --  Output_Index := Output_Index + Token_Length + 1;
-
+            --  if Output_Index + Token_Length < Output'First + Output'Length
             if Output_Index + Token_Length < Output'Last and
               Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
             then
@@ -126,9 +125,13 @@ is
             end if;
          end;
       end loop;
-
-      -- Set the final output length
-      Output_Length := Output_Index - Output'First;
+      if Error then
+         Output_Length := 0;
+      else
+         Output_Length := Output_Index - Output'First;
+      end if;
+      --  -- Set the final output length
+      --  Output_Length := Output_Index - Output'First;
 
    end Decode;
 
