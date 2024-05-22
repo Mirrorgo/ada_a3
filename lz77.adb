@@ -59,9 +59,9 @@ is
          Output_Length := 0;
          return;
       end if;
-      Output_Index  := Output'First;  -- Index for the Output array
-      Output_Length := 0;
-      Error         := False;
+      Output_Index := Output'First;  -- Index for the Output array
+      --  Output_Index := 0;
+      Error        := False;
       --      Output_Index + Input.Length - 1 <= Output'Last
       for Token_Index in Input'Range loop
          declare
@@ -69,13 +69,6 @@ is
             Token_Length : Natural   := Input (Token_Index).Length;
             Token_Next_C : Character := Input (Token_Index).Next_C;
          begin
-
-            --  if Output_Index - 1 < Output'First then
-            --     -- 如果输出的起始索引小于 Output'First，则索引超出范围，报错
-            --     Error         := True;
-            --     Output_Length := 0;
-            --     return;
-            --  end if;
 
             if Output_Index < Token_Offset or
               Token_Length + Output_Index - 1 > Output'Last --边界对吗？
