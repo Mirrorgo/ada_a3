@@ -59,8 +59,9 @@ is
          Output_Length := 0;
          return;
       end if;
-      Output_Index := Output'First;  -- Index for the Output array
-      Error        := False;
+      Output_Length := 0;
+      Output_Index  := Output'First;  -- Index for the Output array
+      Error         := False;
       for Token_Index in Input'Range loop
          declare
             Token_Offset : Natural   := Input (Token_Index).Offset;
@@ -101,6 +102,14 @@ is
                end if;
                Output (Output_Index + I - 1) :=
                  Output ((Output_Index - Token_Offset) + (I - 1));
+               --  pragma Loop_Invariant (True);
+               --  pragma Loop_Invariant
+               --    ((if Token_Length >= 1 then
+               --        (for all J in 1 .. Token_Length =>
+               --           Output (Output_Index + J) =
+               --           Output (Output_Index + J - Token_Offset))) or
+               --     (Error = True and Output_Length = 0));
+
             end loop;
 
             if Output_Index > Output'Last - Token_Length - 1 then
@@ -123,6 +132,16 @@ is
                Output_Length := 0;
                return;
             end if;
+            pragma Loop_Invariant
+              ((Output'First <= Output_Index - Output_Length));
+            --  pragma Loop_Invariant
+            --    ((Output'First <= Output_Index - Output_Length) or
+            --     (Error = True));
+            --  pragma Loop_Invariant
+            --    (for all J in 1 .. Token_Length =>
+            --       (Token_Length <= 1 or
+            --        Output (Output_Index + J) =
+            --          Output (Output_Index + J - Token_Offset)));
          end;
       end loop;
       if Error then
@@ -132,7 +151,6 @@ is
       end if;
       --  -- Set the final output length
       --  Output_Length := Output_Index - Output'First;
-
    end Decode;
 
    function Is_Valid (Input : in Token_Array) return Boolean is
