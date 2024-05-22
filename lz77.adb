@@ -60,15 +60,19 @@ is
          return;
       end if;
       Output_Index := Output'First;  -- Index for the Output array
-      --  Output_Index := 0;
       Error        := False;
-      --      Output_Index + Input.Length - 1 <= Output'Last
       for Token_Index in Input'Range loop
          declare
             Token_Offset : Natural   := Input (Token_Index).Offset;
             Token_Length : Natural   := Input (Token_Index).Length;
             Token_Next_C : Character := Input (Token_Index).Next_C;
          begin
+
+            if Token_Length > Natural'Last - Output_Index then
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
 
             if Output_Index < Token_Offset or
               Token_Length + Output_Index - 1 > Output'Last --边界对吗？
