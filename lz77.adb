@@ -51,69 +51,79 @@ is
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural; Error : out Boolean)
    is
-      Output_Index : Natural := Output'First;  -- Index for the Output array
+      Output_Index : Natural;
    begin
       -- IMPLEMENT THIS
-      Output_Length := 0;
-      Error         := False;
-
-      -- Process each token in the Input array
+      if Output'First < 0 then
+         Error         := True;
+         Output_Length := 0;
+         return;
+      end if;
+      Output_Index := Output'First;  -- Index for the Output array
+      Error        := False;
       for Token_Index in Input'Range loop
-         --  pragma Loop_Invariant
-         --    (Output_Index >= Output'First and
-         --     Output_Index <= Output'Last + 1 and
-         --     (if Error then Output_Length = 0)
-         --  --  and
-         --  --  (for all K in Input'First .. Token_Index =>
-         --  --     Output_Index <= Output'Last + 1)
-         --  );
          declare
-            Token_Offset : constant Natural   := Input (Token_Index).Offset;
-            Token_Length : constant Natural   := Input (Token_Index).Length;
-            Token_Next_C : constant Character := Input (Token_Index).Next_C;
+            Token_Offset : Natural   := Input (Token_Index).Offset;
+            Token_Length : Natural   := Input (Token_Index).Length;
+            Token_Next_C : Character := Input (Token_Index).Next_C;
          begin
-            --  逻辑✅
-            --  作为不变量会不会更好?
-            --  Task1 不应该检查这个
-            -- Check if Output_Index + Token.Length exceeds Output'Last
-            --  if Output_Index + Token_Length > Output'Last then
-            --     Error         := True;
-            --     Output_Length := 0;
-            --     return;
-            --  end if;
 
-            -- Copy the bytes from the output buffer
-
-            for I in 1 .. Token_Length loop
-               declare
-                  Source_Index : Natural :=
-                    Output_Index - Token_Offset + I - 1;
-                  --  边界没问题
-               begin
-                  -- Check if Source_Index is within the valid range
-                  if Source_Index < Output'First
-                     --  这个也不用检查
-                     --    or else Source_Index >= Output_Index
-                     then
-                     Error         := True;
-                     Output_Length := 0;
-                     return;
-                  end if;
-                  Output (Output_Index + I - 1) := Output (Source_Index);
-               end;
-            end loop;
-
-            -- Add the next character to the output buffer
-            if Output_Index + Token_Length + 1 > Output'Last then
+            if Token_Length > Natural'Last - Output_Index then
                Error         := True;
                Output_Length := 0;
                return;
             end if;
 
-            Output (Output_Index + Token_Length) := Token_Next_C;
+            if Output_Index < Token_Offset or
+              Token_Length + Output_Index - 1 > Output'Last --边界对吗？
+            then
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
+            --  pragma Loop_Invariant
+            --    (((Output_Index >= Token_Offset) and
+            --      (Token_Length - 1 > Output'Last - Output_Index)) or
+            --     (Error = True and Output_Length = 0));
 
-            -- Update Output_Index
-            Output_Index := Output_Index + Token_Length + 1;
+            --  pragma Loop_Invariant
+            --    ((if Token_Length >= 1 then
+            --        (for all J in 1 .. Token_Length =>
+            --           Output (Output_Index + J) =
+            --           Output (Output_Index + J - Token_Offset))) or
+            --     (Error = True and Output_Length = 0));
+            for I in 1 .. Token_Length loop
+               --  pragma Loop_Invariant
+               --    (Output_Index - I + Token_Length + 1 = Output_Index);
+               if (Output_Index - Token_Offset) < Output'First - (I - 1) then
+                  Error         := True;
+                  Output_Length := 0;
+                  return;
+               end if;
+               Output (Output_Index + I - 1) :=
+                 Output ((Output_Index - Token_Offset) + (I - 1));
+            end loop;
+
+            if Output_Index > Output'Last - Token_Length - 1 then
+               --  if Output_Index + Token_Length + 1 > Output'Last then
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
+
+            --  Output (Output_Index + Token_Length) := Token_Next_C;
+            --  Output_Index := Output_Index + Token_Length + 1;
+
+            if Output_Index + Token_Length < Output'Last and
+              Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
+            then
+               Output (Output_Index + Token_Length) := Token_Next_C;
+               Output_Index := Output_Index + Token_Length + 1;
+            else
+               Error         := True;
+               Output_Length := 0;
+               return;
+            end if;
          end;
       end loop;
 
