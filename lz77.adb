@@ -54,7 +54,6 @@ is
       Output_Index : Natural;
    begin
       -- IMPLEMENT THIS
-      --  Output_Length := 0;
       if Output'First < 0 then
          Error         := True;
          Output_Length := 0;
@@ -82,7 +81,6 @@ is
                Output_Length := 0;
                return;
             end if;
-
             --  pragma Loop_Invariant
             --    (((Output_Index >= Token_Offset) and
             --      (Token_Length - 1 > Output'Last - Output_Index)) or
@@ -112,7 +110,9 @@ is
                return;
             end if;
 
-            --  if Output_Index + Token_Length < Output'First + Output'Length
+            --  Output (Output_Index + Token_Length) := Token_Next_C;
+            --  Output_Index := Output_Index + Token_Length + 1;
+
             if Output_Index + Token_Length < Output'Last and
               Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
             then
