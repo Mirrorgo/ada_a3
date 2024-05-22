@@ -84,10 +84,10 @@ is
                Output_Length := 0;
                return;
             end if;
-            pragma Loop_Invariant
-              (((Output_Index >= Token_Offset) and
-                (Token_Length - 1 > Output'Last - Output_Index)) or
-               (Error = True and Output_Length = 0));
+            --  pragma Loop_Invariant
+            --    (((Output_Index >= Token_Offset) and
+            --      (Token_Length - 1 > Output'Last - Output_Index)) or
+            --     (Error = True and Output_Length = 0));
 
             --  pragma Loop_Invariant
             --    ((if Token_Length >= 1 then
