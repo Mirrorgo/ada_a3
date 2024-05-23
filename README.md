@@ -17,6 +17,12 @@ To_Big_Integer在prove的时候可以使用
 ## tasks
 > 只需要修改lz77.abd和main.adb,其他文件都不要动
 
+- task1 ✅ 
+  - 条件太多，看看能否简化
+  - Output_Length的初始化问题，应该是1吧
+- task2 ✅ 优化Loop_invariant成为一个等式
+- 
+
 
 ## Commit Message Format
 - chore：这是一个常见的前缀，用于表示其他类别未涵盖的常规任务

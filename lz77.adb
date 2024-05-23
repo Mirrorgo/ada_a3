@@ -154,12 +154,29 @@ is
    end Decode;
 
    function Is_Valid (Input : in Token_Array) return Boolean is
+      Decoded_Length : Natural := 0;
    begin
-      -- IMPLEMENT THIS
-      --  return False;
-      -- 实现验证函数的逻辑，确保输入数据的有效性
-      -- 这里我们假设输入是有效的，实际实现应根据需求修改
-      return True;  -- 在实际实现中应提供正确的验证逻辑
+      for Index in Input'Range loop
+         declare
+            Token_Offset : Natural := Input (Index).Offset;
+            Token_Length : Natural := Input (Index).Length;
+         begin
+            -- 验证偏移量和长度的有效性
+            if (Token_Length > 0 and then Token_Offset = 0)
+              or else (Token_Offset > 0 and then Token_Offset > Decoded_Length)
+               --    or else
+               --    (Token_Length > 0
+               --     and then Token_Offset + Token_Length > Decoded_Length)
+
+            then
+               return False;
+            end if;
+
+            -- 更新解码长度
+            Decoded_Length := Decoded_Length + Token_Length + 1;
+         end;
+      end loop;
+      return True;
    end Is_Valid;
 
    procedure Decode_Fast

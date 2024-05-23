@@ -45,6 +45,10 @@ begin
    end if;
 
    if Is_Valid (T1) then
+      --  test
+      Put ("T1 is valid");
+      New_Line;
+      --  test
       Decode_Fast (T1, B, BLen);
       Put ("Got this many: ");
       Put (BLen);
