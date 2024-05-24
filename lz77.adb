@@ -1,5 +1,6 @@
 with Ada.Text_IO;         use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
+with Big_Integers;        use Big_Integers;
 
 -- Submission authored by:
 -- <INSERT YOUR NAMES HERE>
@@ -160,10 +161,13 @@ is
          declare
             Token_Offset : Natural := Input (Index).Offset;
             Token_Length : Natural := Input (Index).Length;
+            Next_C       : Character := Input (Index).Next_C;
          begin
             -- 验证偏移量和长度的有效性
-            if (Token_Length > 0 and then Token_Offset = 0)
-              or else (Token_Offset > 0 and then Token_Offset > Decoded_Length)
+            if (Token_Length > 0 and then Token_Offset = 0 and then Next_C /= Character'Val(0))
+              or else (Token_Offset > Decoded_Length)
+              or else
+              (Integer'Last - Decoded_Length - 1 < Token_Length )
                --    or else
                --    (Token_Length > 0
                --     and then Token_Offset + Token_Length > Decoded_Length)
@@ -172,7 +176,12 @@ is
                return False;
             end if;
 
-            -- 更新解码长度
+            --  if Decoded_Length > Positive'Last - Token_Length - 1 then
+            --     return False;
+            --  end if;
+            --  pragma Loop_Invariant
+            --     (Integer'Last - Decoded_Length - 1 >= Token_Length );
+
             Decoded_Length := Decoded_Length + Token_Length + 1;
          end;
       end loop;
@@ -183,9 +192,27 @@ is
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural)
    is
+      Output_Index : Integer;
    begin
       -- IMPLEMENT THIS
       Output_Length := 0;
+      Output_Index  := Output'First;
+      for Token_Index in Input'Range loop
+         declare
+            Token_Offset : Natural   := Input (Token_Index).Offset;
+            Token_Length : Natural   := Input (Token_Index).Length;
+            Token_Next_C : Character := Input (Token_Index).Next_C;
+         begin
+            for I in 1 .. Token_Length loop
+               Output (Output_Index + I - 1) :=
+                 Output ((Output_Index - Token_Offset) + (I - 1));
+            end loop;
+            --  pragma Loop_Invariant
+            --    ((Output'First <= Output_Index - Output_Length));
+            Output (Output_Index + Token_Length) := Token_Next_C;
+            Output_Index := Output_Index + Token_Length + 1;
+         end;
+      end loop;
+      Output_Length := Output_Index - Output'First;
    end Decode_Fast;
-
 end LZ77;
