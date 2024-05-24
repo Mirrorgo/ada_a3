@@ -3,20 +3,18 @@ with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Big_Integers;        use Big_Integers;
 
 -- Submission authored by:
--- <INSERT YOUR NAMES HERE>
+-- 1432166 Weizhao Li
+-- 1484354 Chang Liu
 
--- This file requires Proof Level to be set to: <INSERT HERE>
+-- This file requires Proof Level to be set to: 1
 
 package body LZ77 with
   SPARK_Mode
 is
-   --  接受一个名为Input的Token_Array类型的输入参数，返回一个Partial_Length类型的结果
    function Length_Acc (Input : in Token_Array) return Partial_Length is
-      --  这是一个局部变量的定义，变量名为Result，类型为Partial_Length，初始值为Zero
       Result : Partial_Length (Input'Range) := (others => Zero);
    begin
 
-      --  Index是循环变量，Input'Range是循环的范围，表示从Input的第一个元素到最后一个元素
       for Index in Input'Range loop
          -- Note this loop invariant needs "Proof level = 1" to prove it
          pragma Loop_Invariant
@@ -48,6 +46,13 @@ is
       New_Line;
    end Put;
 
+   -- task3:
+   -- 1. Ada本身相较于C等语言，对类型的检查更加严格，因此在实现时，编译器会自动检查一些类型的错误
+   -- 在一些情况下更应该使用Ada来实现，而不是可能有bug的C语言来实现
+   -- 2. 为了完成task2, 我增加了很多额外的边界检查和Loop_Invariant来确保程序的正确性, 这些问题是在我们
+   -- 这提供了很多对于数组越界的检查和Interger溢出的检查。这些检查就是 additional guarantees。
+   -- 当你无法控制可能的输入的时候，这些检查是非常重要的。在这些时候，你应该使用被证明安全的Ada实现而不是 a potentially buggy Ada implementation.
+   --
    procedure Decode
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural; Error : out Boolean)
@@ -55,47 +60,40 @@ is
       Output_Index : Natural;
    begin
       -- IMPLEMENT THIS
+      -- Check if the output array's first index is less than 0 (impossible case for Ada arrays)
       if Output'First < 0 then
          Error         := True;
          Output_Length := 0;
          return;
       end if;
+      -- Initialize output length and index, and set error flag to false
       Output_Length := 0;
-      Output_Index  := Output'First;  -- Index for the Output array
+      Output_Index  := Output'First;
       Error         := False;
+      -- Iterate over each token in the input array
       for Token_Index in Input'Range loop
          declare
             Token_Offset : Natural   := Input (Token_Index).Offset;
             Token_Length : Natural   := Input (Token_Index).Length;
             Token_Next_C : Character := Input (Token_Index).Next_C;
          begin
-
+            -- Check if the token's length will cause an overflow in the output index
             if Token_Length > Natural'Last - Output_Index then
                Error         := True;
                Output_Length := 0;
                return;
             end if;
 
+            -- Check if the output index is valid and if there is enough space for the token
             if Output_Index < Token_Offset or
-              Token_Length + Output_Index - 1 > Output'Last --边界对吗？
+              Token_Length + Output_Index - 1 > Output'Last
             then
                Error         := True;
                Output_Length := 0;
                return;
             end if;
-            --  pragma Loop_Invariant
-            --    (((Output_Index >= Token_Offset) and
-            --      (Token_Length - 1 > Output'Last - Output_Index)) or
-            --     (Error = True and Output_Length = 0));
-            --  pragma Loop_Invariant (if Error then Output_Length = 0);
-            --  pragma Loop_Invariant
-            --    ((if Token_Length >= 1 then
-            --        (for all J in 1 .. Token_Length =>
-            --           Output (Output_Index + J) =
-            --           Output (Output_Index + J - Token_Offset))) or
-            --     (Error = True and Output_Length = 0));
+            -- Copy the characters specified by the token's offset and length
             for I in 1 .. Token_Length loop
-               --  pragma Loop_Invariant (Output_Index = Output_Index);
                if (Output_Index - Token_Offset) < Output'First - (I - 1) then
                   Error         := True;
                   Output_Length := 0;
@@ -103,28 +101,18 @@ is
                end if;
                Output (Output_Index + I - 1) :=
                  Output ((Output_Index - Token_Offset) + (I - 1));
-               --  pragma Loop_Invariant (True);
-               --  pragma Loop_Invariant
-               --    ((if Token_Length >= 1 then
-               --        (for all J in 1 .. Token_Length =>
-               --           Output (Output_Index + J) =
-               --           Output (Output_Index + J - Token_Offset))) or
-               --     (Error = True and Output_Length = 0));
-
             end loop;
 
+            -- Check if there is enough space in the output for the next token
             if Output_Index > Output'Last - Token_Length - 1 then
-               --  if Output_Index + Token_Length + 1 > Output'Last then
                Error         := True;
                Output_Length := 0;
                return;
             end if;
 
-            --  Output (Output_Index + Token_Length) := Token_Next_C;
-            --  Output_Index := Output_Index + Token_Length + 1;
-
+            -- Check if the position to insert the next character is valid
             if Output_Index + Token_Length < Output'Last and
-              Output_Index + Token_Length >= Output'First -- 非常奇怪，感觉不用加的
+              Output_Index + Token_Length >= Output'First
             then
                Output (Output_Index + Token_Length) := Token_Next_C;
                Output_Index := Output_Index + Token_Length + 1;
@@ -133,16 +121,9 @@ is
                Output_Length := 0;
                return;
             end if;
+            -- Loop invariant to ensure the output index is within valid range
             pragma Loop_Invariant
               ((Output'First <= Output_Index - Output_Length));
-            --  pragma Loop_Invariant
-            --    ((Output'First <= Output_Index - Output_Length) or
-            --     (Error = True));
-            --  pragma Loop_Invariant
-            --    (for all J in 1 .. Token_Length =>
-            --       (Token_Length <= 1 or
-            --        Output (Output_Index + J) =
-            --          Output (Output_Index + J - Token_Offset)));
          end;
       end loop;
       if Error then
@@ -150,70 +131,83 @@ is
       else
          Output_Length := Output_Index - Output'First;
       end if;
-      --  -- Set the final output length
-      --  Output_Length := Output_Index - Output'First;
    end Decode;
 
    function Is_Valid (Input : in Token_Array) return Boolean is
       Decoded_Length : Natural := 0;
    begin
+      -- Iterate over each token in the input array
       for Index in Input'Range loop
          declare
             Token_Offset : Natural   := Input (Index).Offset;
             Token_Length : Natural   := Input (Index).Length;
             Next_C       : Character := Input (Index).Next_C;
          begin
-            -- 验证偏移量和长度的有效性
+            -- Check if any of the invalid conditions are met
             if
+               -- If the token has a positive length, offset is zero, and next character is not null
+
               (Token_Length > 0 and then Token_Offset = 0
                and then Next_C /= Character'Val (0))
-              or else (Token_Offset > Decoded_Length)
-              or else (Integer'Last - Decoded_Length - 1 < Token_Length)
-               --    or else
-               --    (Token_Length > 0
-               --     and then Token_Offset + Token_Length > Decoded_Length)
+               -- If the token offset is greater than the decoded length
 
+              or else (Token_Offset > Decoded_Length)
+               -- If adding the token length to the decoded length would cause overflow
+
+              or else (Integer'Last - Decoded_Length - 1 < Token_Length)
             then
                return False;
             end if;
-
-            --  if Decoded_Length > Positive'Last - Token_Length - 1 then
-            --     return False;
-            --  end if;
-            --  pragma Loop_Invariant
-            --     (Integer'Last - Decoded_Length - 1 >= Token_Length );
-
+            -- Update the decoded length by adding the token length plus one for the next character
             Decoded_Length := Decoded_Length + Token_Length + 1;
          end;
       end loop;
       return True;
    end Is_Valid;
 
+   --  Task6 :
+   --  1. Compared to Section 2.1, the implementation of Decode_Fast is more efficient
+   --  because it does not have to check for the validity of the output index and
+   --  the space in the output array for each token. This reduces the number of
+   --  checks and improves the performance of the implementation.
+   --  2.If I added these checks to the Decode_Fast implementation, it would be
+   --  similar to the Decode implementation and would not be as efficient as it
+   --  is now. Actrually, we have already added these checks in is_valid function.
+   --  Too many checks are meaningless and will reduce the efficiency of the program.
+
    procedure Decode_Fast
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural)
    is
-      Output_Index : Integer;
+      Output_Index :
+        Integer; -- Index to track the position in the output array
    begin
       -- IMPLEMENT THIS
-      Output_Length := 0;
-      Output_Index  := Output'First;
+      Output_Length := 0; -- Initialize the output length
+      Output_Index  :=
+        Output'First; -- Initialize the output index to the first position
       for Token_Index in Input'Range loop
          declare
-            Token_Offset : Natural   := Input (Token_Index).Offset;
-            Token_Length : Natural   := Input (Token_Index).Length;
-            Token_Next_C : Character := Input (Token_Index).Next_C;
+            Token_Offset : Natural   :=
+              Input (Token_Index).Offset; -- Offset of the current token
+            Token_Length : Natural   :=
+              Input (Token_Index).Length; -- Length of the current token
+            Token_Next_C : Character :=
+              Input (Token_Index).Next_C; -- Next character after the token
          begin
+            -- Copy characters specified by the token's offset and length
             for I in 1 .. Token_Length loop
                Output (Output_Index + I - 1) :=
                  Output ((Output_Index - Token_Offset) + (I - 1));
             end loop;
+            -- Loop invariant to ensure the output index is within valid range
+            pragma Loop_Invariant
+              ((Output'First <= Output_Index - Output_Length));
+            -- Insert the next character after the copied characters
             Output (Output_Index + Token_Length) := Token_Next_C;
             Output_Index := Output_Index + Token_Length + 1;
          end;
       end loop;
       Output_Length := Output_Index - Output'First;
-      --  pragma Assert (Output_Length = Output_Index - Output'First);
-      --  pragma Assert (Output_Length = 5);
    end Decode_Fast;
 end LZ77;

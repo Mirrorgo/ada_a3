@@ -1,4 +1,5 @@
 # ada assignment 3
+> submit中是实际提交的文件
 ## tasks
 ### task1
 测试用例
@@ -16,6 +17,12 @@ $ gnatmake main
 To_Big_Integer在prove的时候可以使用
 ## tasks
 > 只需要修改lz77.abd和main.adb,其他文件都不要动
+
+- task1 ✅ 
+  - 条件太多，看看能否简化
+  - Output_Length的初始化问题，应该是1吧
+- task2 ✅ 优化Loop_invariant成为一个等式
+- 
 
 
 ## Commit Message Format

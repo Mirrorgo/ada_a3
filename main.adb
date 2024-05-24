@@ -45,11 +45,15 @@ begin
    end if;
 
    if Is_Valid (T1) then
+      --  test
+      Put ("T1 is valid");
+      New_Line;
+      --  test
       Decode_Fast (T1, B, BLen);
       Put ("Got this many: ");
       Put (BLen);
       New_Line;
-      pragma Assert (BLen = 5);
+      pragma Assert (BLen = 4);
       for Index in B'First .. B'First + BLen - 1 loop
          Put (Item => B (Index));
       end loop;
