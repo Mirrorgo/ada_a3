@@ -47,12 +47,17 @@ is
    end Put;
 
    -- task3:
-   -- 1. Ada本身相较于C等语言，对类型的检查更加严格，因此在实现时，编译器会自动检查一些类型的错误
-   -- 在一些情况下更应该使用Ada来实现，而不是可能有bug的C语言来实现
-   -- 2. 为了完成task2, 我增加了很多额外的边界检查和Loop_Invariant来确保程序的正确性, 这些问题是在我们
-   -- 这提供了很多对于数组越界的检查和Interger溢出的检查。这些检查就是 additional guarantees。
-   -- 当你无法控制可能的输入的时候，这些检查是非常重要的。在这些时候，你应该使用被证明安全的Ada实现而不是 a potentially buggy Ada implementation.
-   --
+   -- 1. Compared to languages like C, Ada provides stricter type checking.
+   -- The compiler automatically checks for certain types of errors,
+   -- making Ada more suitable for implementation in some cases, especially
+   -- where there might be bugs in C implementations.
+   -- 2. To complete task2, I added many additional boundary checks and Loop_Invariants
+   -- to ensure the correctness of the program. These checks provide many
+   -- additional guarantees against array bounds and integer overflow errors.
+   -- These checks are crucial when you cannot control possible inputs.
+   -- In such cases, you should use the proven safe Ada implementation
+   -- rather than a potentially buggy Ada implementation.
+
    procedure Decode
      (Input         : in     Token_Array; Output : in out Byte_Array;
       Output_Length :    out Natural; Error : out Boolean)
